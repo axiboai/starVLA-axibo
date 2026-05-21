@@ -45,15 +45,26 @@ def build_dataloader(cfg, dataset_py="lerobot_datasets_oxe"): # TODO now here on
             balance_trajectory_weights=vla_dataset_cfg.get("balance_trajectory_weights", False),
         )
         
-        vla_train_dataloader = DataLoader(
-            vla_dataset,
+        num_workers = int(vla_dataset_cfg.get("num_workers", 2))
+        prefetch_factor = int(vla_dataset_cfg.get("prefetch_factor", 2))
+        pin_memory = bool(vla_dataset_cfg.get("pin_memory", True))
+        persistent_workers = bool(vla_dataset_cfg.get("persistent_workers", num_workers > 0))
+
+        dataloader_kwargs = dict(
             batch_size=cfg.datasets.vla_data.per_device_batch_size,
             collate_fn=collate_fn,
-            num_workers=16,
-            pin_memory=True,
-            persistent_workers=True,
-            prefetch_factor=4,
+            num_workers=num_workers,
+            pin_memory=pin_memory,
+            persistent_workers=persistent_workers,
             # shuffle=True
+        )
+        # torch DataLoader only accepts prefetch_factor when workers > 0.
+        if num_workers > 0:
+            dataloader_kwargs["prefetch_factor"] = prefetch_factor
+
+        vla_train_dataloader = DataLoader(
+            vla_dataset,
+            **dataloader_kwargs,
         )        
         if dist.get_rank() == 0: 
             
