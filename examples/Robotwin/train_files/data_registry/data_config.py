@@ -36,7 +36,7 @@ class AgilexDataConfig:
                 apply_to=self.state_keys,
                 normalization_modes={
                     "state.left_joints": "min_max", "state.right_joints": "min_max",
-                    "state.left_gripper": "binary", "state.right_gripper": "binary",
+                    "state.left_gripper": "min_max", "state.right_gripper": "min_max",
                 },
             ),
             StateActionToTensor(apply_to=self.action_keys),
@@ -44,7 +44,7 @@ class AgilexDataConfig:
                 apply_to=self.action_keys,
                 normalization_modes={
                     "action.left_joints": "min_max", "action.right_joints": "min_max",
-                    "action.left_gripper": "binary", "action.right_gripper": "binary",
+                    "action.left_gripper": "min_max", "action.right_gripper": "min_max",
                 },
             ),
         ])
@@ -64,7 +64,7 @@ class AgilexData50Config(AgilexDataConfig):
                 binary_threshold=0.49,
                 normalization_modes={
                     "state.left_joints": "min_max", "state.right_joints": "min_max",
-                    "state.left_gripper": "binary", "state.right_gripper": "binary",
+                    "state.left_gripper": "min_max", "state.right_gripper": "min_max",
                 },
             ),
             StateActionToTensor(apply_to=self.action_keys),
@@ -73,7 +73,7 @@ class AgilexData50Config(AgilexDataConfig):
                 binary_threshold=0.49,
                 normalization_modes={
                     "action.left_joints": "min_max", "action.right_joints": "min_max",
-                    "action.left_gripper": "binary", "action.right_gripper": "binary",
+                    "action.left_gripper": "min_max", "action.right_gripper": "min_max",
                 },
             ),
         ])
@@ -106,7 +106,7 @@ class ArxX5DataConfig:
                 apply_to=self.state_keys,
                 normalization_modes={
                     "state.left_joints": "min_max", "state.right_joints": "min_max",
-                    "state.left_gripper": "binary", "state.right_gripper": "binary",
+                    "state.left_gripper": "min_max", "state.right_gripper": "min_max",
                 },
             ),
             StateActionToTensor(apply_to=self.action_keys),
@@ -114,7 +114,7 @@ class ArxX5DataConfig:
                 apply_to=self.action_keys,
                 normalization_modes={
                     "action.left_joints": "min_max", "action.right_joints": "min_max",
-                    "action.left_gripper": "binary", "action.right_gripper": "binary",
+                    "action.left_gripper": "min_max", "action.right_gripper": "min_max",
                 },
             ),
         ])
