@@ -22,6 +22,7 @@ Exposed API:
 from __future__ import annotations
 
 import logging
+import time
 from typing import Any, Dict, List, Optional
 
 import numpy as np
@@ -152,7 +153,11 @@ class PolicyServerWrapper:
                 )
         proc = self._get_processor(effective_key)
 
+        t0 = time.time()
         out = self._framework.predict_action(examples=examples, **kwargs)
+        infer_s = time.time() - t0
+        logging.info("PolicyServerWrapper predict_action took %.2fs", infer_s)
+
         normalized = np.asarray(out["normalized_actions"])  # (B, T, D)
 
         unnorm = np.stack(
