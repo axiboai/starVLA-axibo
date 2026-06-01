@@ -120,10 +120,51 @@ class ArxX5DataConfig:
         ])
 
 
+class ArxX5Pi05AlignDataConfig:
+    """Piper X5 config aligned with openpi pi05_flatten_v2 (q99 norm + proprio)."""
+
+    embodiment_tag = EmbodimentTag.NEW_EMBODIMENT
+    video_keys = ["video.cam_high", "video.cam_left_wrist", "video.cam_right_wrist"]
+    state_keys = ["state.left_joints", "state.right_joints", "state.left_gripper", "state.right_gripper"]
+    action_keys = ["action.left_joints", "action.right_joints", "action.left_gripper", "action.right_gripper"]
+    language_keys = ["annotation.human.action.task_description"]
+    observation_indices = [0]
+    action_indices = list(range(16))
+
+    def modality_config(self):
+        return {
+            "video": ModalityConfig(delta_indices=self.observation_indices, modality_keys=self.video_keys),
+            "state": ModalityConfig(delta_indices=self.observation_indices, modality_keys=self.state_keys),
+            "action": ModalityConfig(delta_indices=self.action_indices, modality_keys=self.action_keys),
+            "language": ModalityConfig(delta_indices=self.observation_indices, modality_keys=self.language_keys),
+        }
+
+    def transform(self):
+        q99 = {
+            "state.left_joints": "q99",
+            "state.right_joints": "q99",
+            "state.left_gripper": "q99",
+            "state.right_gripper": "q99",
+            "action.left_joints": "q99",
+            "action.right_joints": "q99",
+            "action.left_gripper": "q99",
+            "action.right_gripper": "q99",
+        }
+        return ComposedModalityTransform(
+            transforms=[
+                StateActionToTensor(apply_to=self.state_keys),
+                StateActionTransform(apply_to=self.state_keys, normalization_modes=q99),
+                StateActionToTensor(apply_to=self.action_keys),
+                StateActionTransform(apply_to=self.action_keys, normalization_modes=q99),
+            ]
+        )
+
+
 ROBOT_TYPE_CONFIG_MAP = {
     "robotwin": AgilexDataConfig(),
     "robotwin50": AgilexData50Config(),
     "arx_x5": ArxX5DataConfig(),
+    "arx_x5_pi05": ArxX5Pi05AlignDataConfig(),
 }
 
 ROBOT_TYPE_TO_EMBODIMENT_TAG = {
@@ -295,4 +336,5 @@ DATASET_NAMED_MIXTURES = {
     "robotwin_task1": [("adjust_bottle", 1.0, "robotwin")],
     "robotwin_task2": [("place_a2b_left", 1.0, "robotwin"), ("place_a2b_right", 1.0, "robotwin")],
     "arx_x5": [("arx_x5", 1.0, "arx_x5")],
+    "arx_x5_pi05": [("arx_x5", 1.0, "arx_x5_pi05")],
 }
