@@ -17,7 +17,7 @@ set -euo pipefail
 
 FRAMEWORK="${FRAMEWORK:-CosmoPredict2GR00T}"
 CONFIG=examples/Robotwin/train_files/starvla_train_piper_cosmo_pi05_aligned.yaml
-RUN_ID="${RUN_ID:-piperx_fold_cosmo_pi05_align_$(date +%m%d)}"
+RUN_ID="${RUN_ID:-piperx_fold_cosmo_pi05_align_50k}"
 RUN_ROOT="${RUN_ROOT:-playground/Checkpoints}"
 GPU="${CUDA_VISIBLE_DEVICES:-0}"
 WANDB_ENTITY="${WANDB_ENTITY:-}"
@@ -45,10 +45,11 @@ accelerate launch \
   --framework.name "${FRAMEWORK}" \
   --run_root_dir "${RUN_ROOT}" \
   --run_id "${RUN_ID}" \
-  --trainer.max_train_steps 15000 \
+  --trainer.max_train_steps 50000 \
   --trainer.save_interval 5000 \
-  --trainer.gradient_accumulation_steps 8 \
-  --datasets.vla_data.per_device_batch_size 1 \
+  --trainer.num_warmup_steps 2500 \
+  --trainer.gradient_accumulation_steps 1 \
+  --datasets.vla_data.per_device_batch_size 16 \
   --datasets.vla_data.include_state true \
   --datasets.vla_data.data_mix arx_x5_pi05 \
   "${WANDB_ARGS[@]}" \
