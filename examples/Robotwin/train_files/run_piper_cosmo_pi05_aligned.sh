@@ -6,7 +6,12 @@
 #   export PYTHONPATH=.
 #   bash examples/Robotwin/train_files/run_piper_cosmo_pi05_aligned.sh
 #
-# For CosmoPredict2PI (slower, layer-wise head), override:
+# OOM at per_device_batch_size 16 on CosmoPredict2PI — use grad accum for effective batch 16:
+#   per_device_batch_size 1 × gradient_accumulation_steps 16  (default, fits VRAM)
+#   per_device_batch_size 2 × gradient_accumulation_steps 8   (try if you have headroom)
+#   per_device_batch_size 4 × gradient_accumulation_steps 4   (may still OOM on Cosmo PI)
+#
+# For CosmoPredict2PI (layer-wise head):
 #   FRAMEWORK=CosmoPredict2PI bash examples/Robotwin/train_files/run_piper_cosmo_pi05_aligned.sh
 #
 # W&B: entity defaults to your logged-in W&B default (omit username unless it is your entity).
@@ -48,8 +53,8 @@ accelerate launch \
   --trainer.max_train_steps 50000 \
   --trainer.save_interval 5000 \
   --trainer.num_warmup_steps 2500 \
-  --trainer.gradient_accumulation_steps 1 \
-  --datasets.vla_data.per_device_batch_size 16 \
+  --trainer.gradient_accumulation_steps 16 \
+  --datasets.vla_data.per_device_batch_size 1 \
   --datasets.vla_data.include_state true \
   --datasets.vla_data.data_mix arx_x5_pi05 \
   "${WANDB_ARGS[@]}" \
