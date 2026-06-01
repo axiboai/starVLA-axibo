@@ -24,7 +24,10 @@ echo "Framework: ${FRAMEWORK}"
 echo "Run ID:    ${RUN_ID}"
 echo "GPU:       ${CUDA_VISIBLE_DEVICES}"
 
+ACCEL_CONFIG=examples/Robotwin/train_files/deepspeed/accelerate_zero2_single_gpu.yaml
+
 accelerate launch \
+  --config_file "${ACCEL_CONFIG}" \
   --num_processes 1 \
   starVLA/training/train_starvla.py \
   --config_yaml "${CONFIG}" \
