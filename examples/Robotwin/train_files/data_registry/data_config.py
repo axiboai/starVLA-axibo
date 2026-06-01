@@ -140,11 +140,13 @@ class ArxX5Pi05AlignDataConfig:
         }
 
     def transform(self):
-        q99 = {
+        state_norm = {
             "state.left_joints": "q99",
             "state.right_joints": "q99",
             "state.left_gripper": "q99",
             "state.right_gripper": "q99",
+        }
+        action_norm = {
             "action.left_joints": "q99",
             "action.right_joints": "q99",
             "action.left_gripper": "q99",
@@ -153,9 +155,9 @@ class ArxX5Pi05AlignDataConfig:
         return ComposedModalityTransform(
             transforms=[
                 StateActionToTensor(apply_to=self.state_keys),
-                StateActionTransform(apply_to=self.state_keys, normalization_modes=q99),
+                StateActionTransform(apply_to=self.state_keys, normalization_modes=state_norm),
                 StateActionToTensor(apply_to=self.action_keys),
-                StateActionTransform(apply_to=self.action_keys, normalization_modes=q99),
+                StateActionTransform(apply_to=self.action_keys, normalization_modes=action_norm),
             ]
         )
 
