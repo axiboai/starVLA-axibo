@@ -158,11 +158,14 @@ class VLATrainer(TrainerUtils):
     def _init_wandb(self):
         """Initialize Weights & Biases."""
         if self.accelerator.is_main_process:
+            entity = self.config.wandb_entity
+            if entity in (None, "", "your_wandb_entity", "your-wandb-entity"):
+                entity = None
             wandb.init(
                 name=self.config.run_id,
                 dir=os.path.join(self.config.output_dir, "wandb"),
                 project=self.config.wandb_project,
-                entity=self.config.wandb_entity,
+                entity=entity,
                 group="vla-train",
             )
 
