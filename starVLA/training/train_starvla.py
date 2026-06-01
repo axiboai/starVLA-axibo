@@ -158,16 +158,16 @@ class VLATrainer(TrainerUtils):
     def _init_wandb(self):
         """Initialize Weights & Biases."""
         if self.accelerator.is_main_process:
-            entity = self.config.wandb_entity
-            if entity in (None, "", "your_wandb_entity", "your-wandb-entity"):
-                entity = None
-            wandb.init(
+            init_kwargs = dict(
                 name=self.config.run_id,
                 dir=os.path.join(self.config.output_dir, "wandb"),
                 project=self.config.wandb_project,
-                entity=entity,
                 group="vla-train",
             )
+            entity = self.config.wandb_entity
+            if entity not in (None, "", "your_wandb_entity", "your-wandb-entity"):
+                init_kwargs["entity"] = entity
+            wandb.init(**init_kwargs)
 
     def _save_initial_configs(self):
         """Save full config and training script at the very start of training."""

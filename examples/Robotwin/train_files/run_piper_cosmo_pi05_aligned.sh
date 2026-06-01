@@ -9,8 +9,9 @@
 # For CosmoPredict2PI (slower, layer-wise head), override:
 #   FRAMEWORK=CosmoPredict2PI bash examples/Robotwin/train_files/run_piper_cosmo_pi05_aligned.sh
 #
-# W&B (override via env or pass through to train_starvla.py):
-#   WANDB_ENTITY=ryanrahman WANDB_PROJECT=starvla-piper bash ...
+# W&B: entity defaults to your logged-in W&B default (omit username unless it is your entity).
+#   WANDB_ENTITY=sohaib03-mcmaster-university WANDB_PROJECT=starvla-piper bash ...
+#   WANDB_MODE=disabled bash ...   # skip logging
 
 set -euo pipefail
 
@@ -19,7 +20,7 @@ CONFIG=examples/Robotwin/train_files/starvla_train_piper_cosmo_pi05_aligned.yaml
 RUN_ID="${RUN_ID:-piperx_fold_cosmo_pi05_align_$(date +%m%d)}"
 RUN_ROOT="${RUN_ROOT:-playground/Checkpoints}"
 GPU="${CUDA_VISIBLE_DEVICES:-0}"
-WANDB_ENTITY="${WANDB_ENTITY:-ryanrahman}"
+WANDB_ENTITY="${WANDB_ENTITY:-}"
 WANDB_PROJECT="${WANDB_PROJECT:-starvla-piper}"
 
 export PYTHONPATH="${PYTHONPATH:-.}"
@@ -28,6 +29,11 @@ export CUDA_VISIBLE_DEVICES="${GPU}"
 echo "Framework: ${FRAMEWORK}"
 echo "Run ID:    ${RUN_ID}"
 echo "GPU:       ${CUDA_VISIBLE_DEVICES}"
+
+WANDB_ARGS=(--wandb_project "${WANDB_PROJECT}")
+if [[ -n "${WANDB_ENTITY}" ]]; then
+  WANDB_ARGS+=(--wandb_entity "${WANDB_ENTITY}")
+fi
 
 ACCEL_CONFIG=examples/Robotwin/train_files/deepspeed/accelerate_zero2_single_gpu.yaml
 
@@ -45,6 +51,5 @@ accelerate launch \
   --datasets.vla_data.per_device_batch_size 1 \
   --datasets.vla_data.include_state true \
   --datasets.vla_data.data_mix arx_x5_pi05 \
-  --wandb_entity "${WANDB_ENTITY}" \
-  --wandb_project "${WANDB_PROJECT}" \
+  "${WANDB_ARGS[@]}" \
   "$@"
