@@ -87,6 +87,8 @@ class ArxX5DataConfig:
     video_keys = ["video.cam_high", "video.cam_left_wrist", "video.cam_right_wrist"]
     state_keys = ["state.left_joints", "state.right_joints", "state.left_gripper", "state.right_gripper"]
     action_keys = ["action.left_joints", "action.right_joints", "action.left_gripper", "action.right_gripper"]
+    action_key_dims = {"action.left_joints": 6, "action.right_joints": 6, "action.left_gripper": 1, "action.right_gripper": 1}
+    state_key_dims = {"state.left_joints": 6, "state.right_joints": 6, "state.left_gripper": 1, "state.right_gripper": 1}
     language_keys = ["annotation.human.action.task_description"]
     observation_indices = [0]
     action_indices = list(range(16))
@@ -127,6 +129,8 @@ class ArxX5Pi05AlignDataConfig:
     video_keys = ["video.cam_high", "video.cam_left_wrist", "video.cam_right_wrist"]
     state_keys = ["state.left_joints", "state.right_joints", "state.left_gripper", "state.right_gripper"]
     action_keys = ["action.left_joints", "action.right_joints", "action.left_gripper", "action.right_gripper"]
+    action_key_dims = {"action.left_joints": 6, "action.right_joints": 6, "action.left_gripper": 1, "action.right_gripper": 1}
+    state_key_dims = {"state.left_joints": 6, "state.right_joints": 6, "state.left_gripper": 1, "state.right_gripper": 1}
     language_keys = ["annotation.human.action.task_description"]
     observation_indices = [0]
     action_indices = list(range(16))
